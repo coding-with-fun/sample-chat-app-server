@@ -23,6 +23,8 @@ io.on("connect", (socket) => {
             room,
             userName: name,
         });
+        socket.userName = name;
+        socket.room = room.trim().toLowerCase();
 
         if (error) {
             callback(error);
@@ -55,6 +57,11 @@ io.on("connect", (socket) => {
     });
 
     socket.on("disconnect", () => {
-        console.log("User has left the socket.");
+        io.to(socket.room).emit("message", {
+            user: "admin",
+            text: `${socket.userName} has left the room.`,
+        });
+
+        console.log("User has left the socket.", socket.userName, socket.room);
     });
 });
